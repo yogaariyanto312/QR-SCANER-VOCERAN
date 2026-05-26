@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#0f0f1a" />
+  <title>MIKHMON QR CODE SCANNER</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    @font-face {
+      font-family: 'fontello';
+      src: url('./font/fontello.eot?14907215');
+      src: url('./font/fontello.eot?14907215#iefix') format('embedded-opentype'),
+           url('./font/fontello.woff?14907215') format('woff'),
+           url('./font/fontello.ttf?14907215') format('truetype'),
+           url('./font/fontello.svg?14907215#fontello') format('svg');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    .icon {
+      font-family: "fontello";
+      font-style: normal;
+      font-weight: normal;
+      speak: none;
+      display: inline-block;
+      text-decoration: inherit;
+      width: 1em;
+      margin-right: .3em;
+      text-align: center;
+      font-variant: normal;
+      text-transform: none;
+      line-height: 1em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a14;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(139, 92, 246, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 60% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 60%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #e2e8f0;
+      padding: 20px;
+    }
+
+    /* Animated background dots */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    /* Header */
+    .app-header {
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .app-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .app-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+    }
+
+    .app-logo-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    .app-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-transform: uppercase;
+    }
+
+    .app-subtitle {
+      font-size: 0.72rem;
+      color: #64748b;
+      letter-spacing: 0.05em;
+      font-weight: 400;
+    }
+
+    /* Scanner Card */
+    .scanner-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      box-shadow:
+        0 25px 50px rgba(0, 0, 0, 0.5),
+        0 0 0 1px rgba(99, 102, 241, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    .scanner-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .scanner-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 8px #22c55e;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px #22c55e; }
+      50% { opacity: 0.6; box-shadow: 0 0 4px #22c55e; }
+    }
+
+    .scanner-label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: #94a3b8;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .scanner-badge {
+      font-size: 0.65rem;
+      padding: 3px 8px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.25);
+      border-radius: 20px;
+      color: #818cf8;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+
+    /* Camera viewport */
+    .camera-wrapper {
+      position: relative;
+      width: 100%;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .camera {
+      width: 100% !important;
+    }
+
+    video {
+      width: 100% !important;
+      height: auto !important;
+      display: block;
+    }
+
+    /* Scan frame corners */
+    .scan-frame {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .scan-frame::before,
+    .scan-frame::after,
+    .scan-frame .corner-br,
+    .scan-frame .corner-bl {
+      content: '';
+      position: absolute;
+      width: 28px;
+      height: 28px;
+      border-color: #6366f1;
+      border-style: solid;
+    }
+
+    .scan-frame::before {
+      top: 20px;
+      left: 20px;
+      border-width: 3px 0 0 3px;
+      border-radius: 4px 0 0 0;
+    }
+
+    .scan-frame::after {
+      top: 20px;
+      right: 20px;
+      border-width: 3px 3px 0 0;
+      border-radius: 0 4px 0 0;
+    }
+
+    .scan-frame .corner-br {
+      bottom: 20px;
+      right: 20px;
+      border-width: 0 3px 3px 0;
+      border-radius: 0 0 4px 0;
+    }
+
+    .scan-frame .corner-bl {
+      bottom: 20px;
+      left: 20px;
+      border-width: 0 0 3px 3px;
+      border-radius: 0 0 0 4px;
+    }
+
+    /* Animated scan line */
+    .scan-line {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, #6366f1, transparent);
+      box-shadow: 0 0 12px rgba(99, 102, 241, 0.8);
+      animation: scan-move 2.5s ease-in-out infinite;
+      pointer-events: none;
+      top: 20px;
+    }
+
+    @keyframes scan-move {
+      0%, 100% { top: 20px; opacity: 0.8; }
+      50% { top: calc(100% - 20px); opacity: 1; }
+    }
+
+    /* Result area */
+    .result-area {
+      padding: 14px 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .result-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(99, 102, 241, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .result-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: #6366f1;
+    }
+
+    #result {
+      font-size: 0.8rem;
+      color: #64748b;
+      font-style: italic;
+      flex: 1;
+      word-break: break-all;
+      line-height: 1.4;
+    }
+
+    #result a {
+      color: #818cf8;
+      text-decoration: none;
+    }
+
+    #result a:hover {
+      text-decoration: underline;
+    }
+
+    /* Action buttons */
+    .action-buttons {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(8px);
+      letter-spacing: 0.02em;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn:hover, .btn:active {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+      border-color: rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(139, 92, 246, 0.35));
+      border-color: rgba(99, 102, 241, 0.5);
+      box-shadow: 0 4px 24px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Footer */
+    .app-footer {
+      text-align: center;
+      padding: 4px 0;
+    }
+
+    .app-footer p {
+      font-size: 0.68rem;
+      color: #334155;
+      letter-spacing: 0.03em;
+    }
+
+    .app-footer a {
+      color: #475569;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .app-footer a:hover {
+      color: #6366f1;
+    }
+
+    /* Responsive */
+    @media (max-width: 360px) {
+      .action-buttons {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <script type="text/javascript" src="llqrcode.js"></script>
+  <script type="text/javascript" src="mikhmon_webqr.js?v1"></script>
+  <script async src="https://arc.io/widget.min.js#rDZc6s4f"></script>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Header -->
+    <div class="app-header">
+      <div class="app-logo">
+        <div class="app-logo-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3h7v7H3V3zm1 1v5h5V4H4zm1 1h3v3H5V5zM14 3h7v7h-7V3zm1 1v5h5V4h-5zm1 1h3v3h-3V5zM3 14h7v7H3v-7zm1 1v5h5v-5H4zm1 1h3v3H5v-3zM14 14h2v2h-2v-2zm3 0h2v2h-2v-2zm-3 3h2v2h-2v-2zm3 0h2v2h-2v-2z"/>
+          </svg>
+        </div>
+        <div>
+          <div class="app-title">Mikhmon QR</div>
+        </div>
+      </div>
+      <div class="app-subtitle">Point camera at a QR code to scan</div>
+    </div>
+
+    <!-- Scanner Card -->
+    <div class="scanner-card">
+
+      <div class="scanner-header">
+        <div class="scanner-header-left">
+          <div class="status-dot"></div>
+          <span class="scanner-label">Camera Active</span>
+        </div>
+        <span class="scanner-badge">Live</span>
+      </div>
+
+      <div class="camera-wrapper">
+        <div class="camera" id="outdiv"></div>
+        <div class="scan-frame">
+          <div class="corner-br"></div>
+          <div class="corner-bl"></div>
+        </div>
+        <div class="scan-line"></div>
+      </div>
+
+      <div class="result-area">
+        <div class="result-icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm-6-4h8v2h-8z"/>
+          </svg>
+        </div>
+        <div id="result">Waiting for QR code...</div>
+      </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <div class="btn btn-primary" id="reload" onclick="location.reload();">
+        <i class="icon icon-arrows-cw">&#xe800;</i>
+        Reload Camera
+      </div>
+      <a class="btn" href="intent://laksa19.github.io/myqr#Intent;scheme=http;package=com.android.chrome;end">
+        <i class="icon icon-chrome-1">&#xf268;</i>
+        Open in Chrome
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="app-footer">
+      <p>MIKHMON QR CODE SCANNER &mdash; Powered by <a href="http://www.webqr.com" target="_blank">webqr.com</a></p>
+    </div>
+
+  </div>
+
+  <canvas style="display:none;" id="qr-canvas" width="800" height="600"></canvas>
+  <script type="text/javascript">load();</script>
+</body>
+</html>
