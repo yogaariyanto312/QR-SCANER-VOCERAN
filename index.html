@@ -4,7 +4,7 @@
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="theme-color" content="#0f0f1a" />
-  <title>MIKHMON QR CODE SCANNER</title>
+  <title>Agoy.net QR CODE SCANNER</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -396,6 +396,11 @@
         grid-template-columns: 1fr;
       }
     }
+
+    /* Hide branding injected by third-party JS */
+    body > *:not(.app-container):not(canvas) {
+      display: none !important;
+    }
   </style>
   <script type="text/javascript" src="llqrcode.js"></script>
   <script type="text/javascript" src="mikhmon_webqr.js?v1"></script>
@@ -414,7 +419,7 @@
           </svg>
         </div>
         <div>
-          <div class="app-title">Mikhmon QR</div>
+          <div class="app-title">Agoy.net QR Code Scanner</div>
         </div>
       </div>
       <div class="app-subtitle">Point camera at a QR code to scan</div>
@@ -465,7 +470,7 @@
 
     <!-- Footer -->
     <div class="app-footer">
-      <p>MIKHMON QR CODE SCANNER &mdash; Powered by <a href="http://www.webqr.com" target="_blank">webqr.com</a></p>
+      <p>Agoy.net QR CODE SCANNER &mdash; Powered by <a href="http://www.webqr.com" target="_blank">webqr.com</a></p>
     </div>
 
   </div>
