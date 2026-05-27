@@ -2,7 +2,7 @@
 
 > QR Code scanner berbasis web untuk login hotspot MikroTik — ringan, cepat, dan bisa langsung diakses dari browser HP.
 
-![GitHub deployments]([https://img.shields.io/github/deployments/yogaariyanto312/QR-SCANER-VOCERAN/github-pages?label=GitHub%20Pages&style=flat-square](https://yogaariyanto312.github.io/QR-SCANER-VOCERAN/))
+![GitHub deployments](https://yogaariyanto312.github.io/QR-SCANER-VOCERAN/)
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
 ![CSS](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
